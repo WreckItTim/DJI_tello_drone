@@ -32,18 +32,27 @@ command('command', tello_address)
 time.sleep(1)
 
 # turn on video stream
+command('takeoff', tello_address)
+time.sleep(1)
+
+# turn on video stream
 command('streamon', tello_address)
 time.sleep(1)
 
 # use opencv to read live video from drone
-camera = cv2.VideoCapture('udp://127.0.0.1:11111')
-time.sleep(3)
+camera = cv2.VideoCapture('udp://0.0.0.0:11111')
+time.sleep(4)
 
 # loop to read and display video
 # WARNING: make sure to press q to quit, so properly shuts down
+sample_time = 0.2
+last_grab = time.time()
 while(True):
     ret, frame = camera.read()
-    cv2.imshow('Tello', frame)
+    if ret:
+        if time.time() - last_grab >= sample_time:
+            last_grab = time.time()
+            cv2.imshow('Tello', frame)
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
